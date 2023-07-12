@@ -1,28 +1,27 @@
 import React, { createContext, useReducer } from "react";
+import PropTypes from 'prop-types';
 import { ColorList } from "./components/ColorPalette";
 
 // import { saveAs } from "file-saver";
-
 /* Import Animation to Build */
 
-import framesCircle3x3  from "./animations/circle3x3";
+import framesCircle3x3 from "./animations/circle3x3";
 import framesBlue4x4 from "./animations/blue4x4";
 import framesPink2x2 from "./animations/pink2x2";
 import framesOne1x1 from "./animations/one1x1";
 
 /* simple deep clone function */
-export const clone = (array) => {
-  return JSON.parse(JSON.stringify(array));
-};
 
-const framesBlue4x4Size  = [4, 4];
+export const clone = (array) => JSON.parse(JSON.stringify(array));
+
+const framesBlue4x4Size = [4, 4];
 const framesEmpty3x3Size = [3, 3];
 const framesPink2x2Size = [2, 2];
 const framesOne1x1Size = [1, 1];
 
 const frameArrey = [
-  [framesBlue4x4, framesBlue4x4Size ],
-  [framesCircle3x3 , framesEmpty3x3Size],
+  [framesBlue4x4, framesBlue4x4Size],
+  [framesCircle3x3, framesEmpty3x3Size],
   [framesPink2x2, framesPink2x2Size],
   [framesOne1x1, framesOne1x1Size],
 ];
@@ -41,9 +40,8 @@ for (let i = 0; i < cellLength; i += 1) {
   });
 }
 
-const matrixExpand = (x, y, height) => {
-  return x + height * y;
-};
+const matrixExpand = (x, y, height) => x + height * y;
+
 const frames = frameArrey[0][0];
 /* if frames are imported load into state else load blank array */
 const f = frames.length > 0 ? clone(frames) : [clone(blankArray)];
@@ -69,8 +67,8 @@ export const Store = createContext(initialState);
 const exportFrames = (state) => {
   const { height, width, frames } = state;
   const expportFrames = clone(frames);
-  const dataSet = expportFrames.map((frame) => {
-    return frame.map((still, index) => {
+  const dataSet = expportFrames.map((frame) =>
+    frame.map((still, index) => {
       const x = index % width;
       const y = (index - x) / height;
 
@@ -81,8 +79,9 @@ const exportFrames = (state) => {
       };
 
       return objectPixel;
-    });
-  });
+    })
+  );
+
   // const tempTXT = JSON.stringify(dataSet);
   // let blob = new Blob([tempTXT], { type: "text/plain;charset=utf-8" });
   // saveAs(blob, "Frame.txt");
@@ -98,9 +97,7 @@ const updateCurrent = (state, index) => {
   return { ...state, ...config };
 };
 
-const updateColor = (state, color) => {
-  return { ...state, currentColor: color };
-};
+const updateColor = (state, color) => ({ ...state, currentColor: color });
 
 const updatePixel = (state, index) => {
   const { frames, currentFrame, canvasArray, currentColor } = state;
@@ -230,19 +227,9 @@ const shiftFrame = (state, direction) => {
   };
 };
 
-const updateWidthFrame = (state, action) => {
-  return {
-    ...state,
-    width: action,
-  };
-};
+const updateWidthFrame = (state, action) => ({ ...state, width: action, });
 
-const updateHightFrame = (state, action) => {
-  return {
-    ...state,
-    height: action,
-  };
-};
+const updateHightFrame = (state, action) => ({ ...state, height: action, });
 
 const loadFrame = (state, frame, size, index) => {
   const cellLength = size[0] * size[1];
@@ -275,8 +262,8 @@ const SaveNewFrame = (state) => {
   const { frames, framesArrey, width, height } = state;
 
   const SaveNewFrameToList = clone(frames);
-  const dataSet = SaveNewFrameToList.map((frame) => {
-    return frame.map((still, index) => {
+  const dataSet = SaveNewFrameToList.map((frame) =>
+    frame.map((still, index) => {
       const x = index % width;
       const y = (index - x) / height;
 
@@ -287,8 +274,8 @@ const SaveNewFrame = (state) => {
       };
 
       return objectPixel;
-    });
-  });
+    })
+  );
   const tempFrames = [dataSet, [width, height]];
   framesArrey.push(tempFrames);
   return {
@@ -296,12 +283,7 @@ const SaveNewFrame = (state) => {
   };
 };
 
-const ChangeSendFrameFromAppSpeed = (state, action) => {
-  return {
-    ...state,
-    SendFrameFromAppSpeed: action,
-  };
-};
+const ChangeSendFrameFromAppSpeed = (state, action) => ({ ...state, SendFrameFromAppSpeed: action });
 
 /**
  * Reducers for state/actions
@@ -347,10 +329,14 @@ const reducer = (state, action) => {
   }
 };
 
+// there was a {child} inside the     export const StoreProvider = (child) => {....<Store.Provider value={{ state, dispatch }}>{child}  </Store.Provider
 export const StoreProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   return (
     <Store.Provider value={{ state, dispatch }}> {children} </Store.Provider>
   );
+};
+StoreProvider.propTypes = {
+  children: PropTypes.node.isRequired,
 };
