@@ -1,7 +1,17 @@
 import React, { useContext } from "react";
+
+// @mui
+import {
+    Card,
+    Button,
+    Grid,
+    CardContent,
+    CardHeader,
+} from '@mui/material';
+
 import { Store } from "../Store";
-import Button from "@mui/material/Button";
 import { updatePixel } from "../Actions";
+
 
 const PixelButton = ({ color, onClick, coordinates }) => (
     <Button
@@ -63,7 +73,17 @@ const CanvasWindow = ({ size }) => {
         return frame;
     };
 
-    return <div>{generateFrame()}</div>;
+    return (
+
+        <Grid spacing={3}>
+            <Card >
+                <CardHeader title='current frame ' subheader='click on cell to change color' />
+                <CardContent>
+                    <>{generateFrame()}</>
+                </CardContent>
+            </Card>
+        </Grid>
+    )
 };
 
 export default CanvasWindow;

@@ -1,7 +1,7 @@
-import React, { useContext } from "react";
-import Grid from '@mui/material/Grid'; // Grid version 1
-import Container from '@mui/material/Container'; // Grid version 1
-
+import React from "react";
+import PropTypes from "prop-types";
+import Grid from '@mui/material/Grid';
+import Container from '@mui/material/Container';
 import CanvasWindow from "./CanvasWindow";
 import AnimationWindow from "./AnimationWindow";
 import FramesWindow from "./FramesWindow";
@@ -9,29 +9,27 @@ import FrameLoader from "./FrameLoader";
 import ColorPalette from "./ColorPalette";
 import Controlls from "./Controlls";
 
-const FramePage = ({ socket }) => {
-  return (
+const FramePage = ({ socket }) => (
+  <div>
     <div>
-      <div>
-        <Container maxWidth="sm">
-          <Grid >
-            <Controlls socket={socket} />
-          </Grid>
-          <Grid >
-            <CanvasWindow />
-          </Grid>
-          <Grid >
-            <ColorPalette />
-            <FrameLoader />
-            <AnimationWindow />
-          </Grid>
-          <Grid >
-            <FramesWindow />
-          </Grid>
-        </Container>
-      </div>
+      <Container >
+        <Grid >
+          <Controlls socket={socket} />
+          {/* <FrameLoader /> */}
+          <CanvasWindow />
+          <ColorPalette />
+          <AnimationWindow />
+        </Grid>
+        <Grid>
+          <FramesWindow />
+        </Grid>
+      </Container>
     </div>
-  );
+  </div>
+);
+
+FramePage.propTypes = {
+  socket: PropTypes.object.isRequired,
 };
 
 export default FramePage;

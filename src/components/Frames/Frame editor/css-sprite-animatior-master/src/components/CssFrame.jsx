@@ -27,7 +27,7 @@ const CssFrame = (props) => {
         const x = index % width;
         const y = (index - x) / height;
         if (index > 0 && cssString !== "") cssString += ",";
-        cssString +=`${~~(size * (x + 1))}px ${~~(size * (y + 1))}px` + ` 0 ${cell.color}`;
+        cssString += `${Math.floor(size * (x + 1))}px ${Math.floor(size * (y + 1))}px 0 ${cell.color}`;
       }
     });
 
@@ -44,6 +44,11 @@ const CssFrame = (props) => {
   };
 
   return generateCSSFrame(frame, size);
+};
+
+CssFrame.propTypes = {
+  frame: PropTypes.array.isRequired,
+  size: PropTypes.number.isRequired,
 };
 
 export default CssFrame;

@@ -6,11 +6,14 @@ import { Container, Typography, Grid } from '@mui/material';
 import {
   AppWidgetSummary,
 } from '../sections/@dashboard/app';
+
+import FrameEditor from "../components/Frames/Frame editor/FrameEditor";
+
 // mock
 
 // ----------------------------------------------------------------------
 
-export default function EditorPage() {
+export default function EditorPage(socket) {
 
   return (
     <>
@@ -39,8 +42,12 @@ export default function EditorPage() {
           <Grid item xs={12} sm={6} md={3}>
             <AppWidgetSummary title="Bug Reports" total={234} color="error" icon={'ant-design:bug-filled'} />
           </Grid>
-        </Grid>
 
+          <Grid>
+            <FrameEditor socket={socket} />
+          </Grid>
+
+        </Grid>
       </Container>
     </>
   );

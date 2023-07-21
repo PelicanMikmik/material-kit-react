@@ -1,15 +1,16 @@
-import React, { useContext } from "react";
-import { Store } from "../Store";
-// import { CompactPicker } from "react-color";
-import { updateColor } from "../Actions";
+import React from "react";
+// import { useContext } from "react";
+// import  CompactPicker  from "react-color";
+// import { Store } from "../Store";
+// import { updateColor } from "../Actions";
 
 export const ColorList = [
 ];
 
-const ColorPalette = (props) => {
-  const { state, dispatch } = useContext(Store);
+const ColorPalette = () => (
+  // const { state, dispatch } = useContext(Store);
 
-  return (
+
     <div>
       {/* <CompactPicker
         onChangeComplete={(e) => {
@@ -17,8 +18,8 @@ const ColorPalette = (props) => {
         }}
       /> */}
     </div>
-  );
 
-};
+
+);
 
 export default ColorPalette;

@@ -127,7 +127,6 @@ export const loadFrame = (value, size, index, dispatch) => {
         frame: value,
         size,
         index,
-
     });
 };
 
