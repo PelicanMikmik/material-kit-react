@@ -1,4 +1,7 @@
 import React, { useContext } from "react";
+import { Box } from "@mui/material";
+
+
 import PropTypes from "prop-types";
 import { Store } from "../Store";
 
@@ -43,7 +46,11 @@ const CssFrame = (props) => {
     return <div style={inlineStyle}> </div>;
   };
 
-  return generateCSSFrame(frame, size);
+  return (
+    <Box display="flex" alignItems="center" justifyContent="center" height={size} width={size}>
+      {generateCSSFrame(frame, size)}
+    </Box>
+  );
 };
 
 CssFrame.propTypes = {
