@@ -1,7 +1,9 @@
 import { Helmet } from 'react-helmet-async';
+import PropTypes from 'prop-types';
+
 // @mui
 import { styled } from '@mui/material/styles';
-import {  Container, Typography, } from '@mui/material';
+import { Container, Typography, } from '@mui/material';
 // hooks
 import useResponsive from '../hooks/useResponsive';
 // components
@@ -39,9 +41,8 @@ const StyledContent = styled('div')(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-export default function LoginPage() {
+export default function LoginPage( {socket} ) {
   const mdUp = useResponsive('up', 'md');
-
   return (
     <>
       <Helmet>
@@ -71,10 +72,17 @@ export default function LoginPage() {
             <Typography variant="h4" gutterBottom>
               Sign in to Starling
             </Typography>
-            <LoginForm />
+            <LoginForm socket={socket} />
           </StyledContent>
         </Container>
       </StyledRoot>
     </>
   );
 }
+
+LoginPage.propTypes = {
+  socket: PropTypes.shape({
+    emit: PropTypes.func.isRequired,
+    id: PropTypes.string.isRequired,
+  }).isRequired,
+};

@@ -23,16 +23,16 @@ export default function Router() {
       path: '/dashboard',
       element: <DashboardLayout />,
       children: [
-        { element: <Navigate to="/dashboard/app" />, index: true },
-        { path: 'app', element: <DashboardAppPage /> },
-        { path: 'user', element: <UserPage  /> },
+        { element: <Navigate to="/dashboard/app" socket={socket}/>, index: true },
+        { path: 'app', element: <DashboardAppPage socket={socket}/> },
+        { path: 'user', element: <UserPage  socket={socket}/> },
         { path: 'products', element: <EditorPage  socket={socket}/> },
         { path: 'blog', element: <BlogPage /> },
       ],
     },
     {
       path: 'login',
-      element: <LoginPage />,
+      element: <LoginPage socket={socket}/>,
     },
     {
       element: <SimpleLayout />,

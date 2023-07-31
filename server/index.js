@@ -38,6 +38,8 @@ socketIO.on("connection", (socket) => {
     });
 
     socket.on("newUser", (data) => {
+        console.log("User just connected");
+        console.log(data);
         users.push(data);
         socketIO.emit("newUserResponse", users);
     });

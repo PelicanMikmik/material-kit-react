@@ -11,7 +11,7 @@ import FrameEditor from "../components/Frames/Frame editor/FrameEditor";
 // ----------------------------------------------------------------------
 
 export default function EditorPage(socket) {
-
+  console.log(socket);
   return (
     <>
       <Helmet>

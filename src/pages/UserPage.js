@@ -1,7 +1,8 @@
 import { Helmet } from 'react-helmet-async';
-import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+
 // @mui
 import {
   Card,
@@ -14,63 +15,48 @@ import {
   TableCell,
   Container,
   Typography,
-  IconButton,
   TableContainer,
 } from '@mui/material';
 // components
 import Label from '../components/label';
-import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
 // sections
 import { UserListHead } from '../sections/@dashboard/user';
 // mock
-import USERLIST from '../_mock/user';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', alignRight: false },
-  { id: 'company', label: 'Company', alignRight: false },
+  { id: 'position', label: 'Position', alignRight: false },
+  { id: 'isLocated', label: 'Located', alignRight: false },
   { id: 'role', label: 'Role', alignRight: false },
-  { id: 'isVerified', label: 'Verified', alignRight: false },
   { id: 'status', label: 'Status', alignRight: false },
   { id: '' },
 ];
 
 // ----------------------------------------------------------------------
 
-function descendingComparator(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
 
-export default function UserPage() {
-
-  const [order, setOrder] = useState('asc');
+export default function UserPage({ socket }) {
 
   const [selected, setSelected] = useState([]);
 
-  const [orderBy, setOrderBy] = useState('name');
+  const [users, setUsers] = useState([])
 
-  const handleRequestSort = (event, property) => {
-    const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
-    setOrderBy(property);
-  };
+  // SOCKET ----------------------------------------------------------------------
+  //  Socket listens for new user response, List all users .
 
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelecteds = USERLIST.map((n) => n.name);
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
-  };
+  useEffect(() => {
+    socket.on("newUserResponse", data => {
+      setUsers(data)
+      console.log(data);
+    })
+    console.log(users);
+  }, [socket, users])
+
+  //  ----------------------------------------------------------------------
+
 
   const handleClick = (event, name) => {
     const selectedIndex = selected.indexOf(name);
@@ -105,52 +91,49 @@ export default function UserPage() {
             <TableContainer sx={{ minWidth: 800 }}>
               <Table>
                 <UserListHead
-                  order={order}
-                  orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={USERLIST.length}
-                  numSelected={selected.length}
-                  onRequestSort={handleRequestSort}
-                  onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
-                  {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                  {/* {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                     const { id, name, role, status, company, avatarUrl, isVerified } = row;
                     const selectedUser = selected.indexOf(name) !== -1;
 
-                    return (
-                      <TableRow hover key={id} tabIndex={-1} role="checkbox" selected={selectedUser}>
-                        <TableCell padding="checkbox">
-                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, name)} />
-                        </TableCell>
+                    return ( */}
 
-                        <TableCell component="th" scope="row" padding="none">
-                          <Stack direction="row" alignItems="center" spacing={2}>
-                            <Avatar alt={name} src={avatarUrl} />
-                            <Typography variant="subtitle2" noWrap>
-                              {name}
-                            </Typography>
-                          </Stack>
-                        </TableCell>
 
-                        <TableCell align="left">{company}</TableCell>
+                  <TableRow hover key={1} tabIndex={-1} role="checkbox" selected={'selectedUser'}>
+                    <TableCell padding="checkbox">
+                      <Checkbox checked={'selectedUser'} onChange={(event) => handleClick(event, 'name')} />
+                    </TableCell>
 
-                        <TableCell align="left">{role}</TableCell>
+                    <TableCell component="th" scope="row" padding="none">
+                      <Stack direction="row" alignItems="center" spacing={2}>
+                        <Avatar alt={'name'} src={'avatarUrl'} />
+                        <Typography variant="subtitle2" noWrap>
+                          {'"name"'}
+                          {users.map(user => <p key={user.socketID}>{user.userName}</p>)}
+                        </Typography>
+                      </Stack>
+                    </TableCell>
 
-                        <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell>
+                    <TableCell align="left">{"company"}</TableCell>
 
-                        <TableCell align="left">
-                          <Label color={(status === 'banned' && 'error') || 'success'}>{sentenceCase(status)}</Label>
-                        </TableCell>
+                    <TableCell align="left">{"role"}</TableCell>
 
-                        <TableCell align="right">
-                          <IconButton size="large" color="inherit" onClick={console.log('111')}>
-                            <Iconify icon={'eva:more-vertical-fill'} />
-                          </IconButton>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
+                    <TableCell align="left">{ 'Yes'}</TableCell>
+
+                    <TableCell align="left">
+                      <Label color={(1 === 'banned' && 'error') || 'success'}>{sentenceCase("status")}</Label>
+                    </TableCell>
+
+                    <TableCell align="right">
+                      {/* <IconButton size="large" color="inherit" onClick={console.log('')}>
+                        <Iconify icon={'eva:more-vertical-fill'} />
+                      </IconButton> */}
+                    </TableCell>
+                  </TableRow>
+                  {/* );
+                  })} */}
                   {/* {emptyRows > 0 && (
                     <TableRow style={{ height: 53 * emptyRows }}>
                       <TableCell colSpan={6} />
@@ -201,3 +184,11 @@ export default function UserPage() {
     </>
   );
 }
+
+UserPage.propTypes = {
+  socket: PropTypes.shape({
+    emit: PropTypes.func.isRequired,
+    id: PropTypes.string.isRequired,
+    on: PropTypes.func.isRequired, 
+  }).isRequired,
+};
