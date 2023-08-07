@@ -20,10 +20,13 @@ const socket = io("http://localhost:4000");
 export default function Router() {
   const routes = useRoutes([
     {
+      path: '/',
+      element: <LoginPage socket={socket}/>,
+    },
+    {
       path: '/dashboard',
       element: <DashboardLayout />,
       children: [
-        { element: <Navigate to="/dashboard/app" socket={socket}/>, index: true },
         { path: 'app', element: <DashboardAppPage socket={socket}/> },
         { path: 'user', element: <UserPage  socket={socket}/> },
         { path: 'products', element: <EditorPage  socket={socket}/> },
@@ -31,13 +34,9 @@ export default function Router() {
       ],
     },
     {
-      path: 'login',
-      element: <LoginPage socket={socket}/>,
-    },
-    {
       element: <SimpleLayout />,
       children: [
-        { element: <Navigate to="/dashboard/app" />, index: true },
+        { element: <Navigate to="/dashboard/app" /> },
         { path: '404', element: <Page404 /> },
         { path: '*', element: <Navigate to="/404" /> },
       ],

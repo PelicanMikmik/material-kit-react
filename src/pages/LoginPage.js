@@ -83,6 +83,6 @@ export default function LoginPage( {socket} ) {
 LoginPage.propTypes = {
   socket: PropTypes.shape({
     emit: PropTypes.func.isRequired,
-    id: PropTypes.string.isRequired,
+    // id: PropTypes.string.isRequired,
   }).isRequired,
 };

@@ -11,7 +11,7 @@ import FrameEditor from "../components/Frames/Frame editor/FrameEditor";
 // ----------------------------------------------------------------------
 
 export default function EditorPage(socket) {
-  console.log(socket);
+
   return (
     <>
       <Helmet>
@@ -23,7 +23,7 @@ export default function EditorPage(socket) {
           Editor
         </Typography>
 
-        <Grid container spacing={3}>
+        <Grid>
           <Grid>
             <FrameEditor socket={socket} />
           </Grid>
