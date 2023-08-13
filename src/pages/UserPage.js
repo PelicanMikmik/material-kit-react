@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import { sentenceCase } from 'change-case';
-import { useState, useEffect } from 'react';
+import { useContext } from 'react';
 import PropTypes from 'prop-types';
 
 // @mui
@@ -23,6 +23,7 @@ import Scrollbar from '../components/scrollbar';
 // sections
 import { UserListHead } from '../sections/@dashboard/user';
 // mock
+import { Store } from "../components/Frames/Frame editor/css-sprite-animatior-master/src/Store";
 
 // ----------------------------------------------------------------------
 
@@ -37,23 +38,13 @@ const TABLE_HEAD = [
 
 // ----------------------------------------------------------------------
 
-export default function UserPage({ socket }) {
+export default function UserPage() {
+  const { state, dispatch } = useContext(Store);
+  const { UserList } = state;
 
-  const [selected, setSelected] = useState([]);
-
-  const [users, setUsers] = useState([])
-
-  // SOCKET ----------------------------------------------------------------------
-  //  Socket listens for new user response, List all users .
-
-  useEffect(() => {
-    socket.on("newUserResponse", data => {
-      setUsers(data)
-    })
-  }, )
 
   //  ----------------------------------------------------------------------
-  if (users.length !== 0) {
+  if (UserList.length !== 0) {
     return (
       <>
         <Helmet>
@@ -75,8 +66,8 @@ export default function UserPage({ socket }) {
                     headLabel={TABLE_HEAD}
                   />
                   <TableBody>
-                    {users.map((user) => (
-                      <TableRow key={user.socketID} hover tabIndex={-1} role="checkbox" selected={selected.indexOf(user.userName) !== -1}>
+                    {UserList.map((user) => (
+                      <TableRow key={user.socketID} hover tabIndex={-1} role="checkbox" >
                         <TableCell padding="checkbox">
                           <Checkbox />
                         </TableCell>
@@ -95,7 +86,6 @@ export default function UserPage({ socket }) {
 
                         <TableCell align="left">Yes</TableCell>
 
-
                       </TableRow>
                     ))}
                   </TableBody>
@@ -106,7 +96,7 @@ export default function UserPage({ socket }) {
         </Container>
       </>
     );
-  } 
+  }
 
 }
 

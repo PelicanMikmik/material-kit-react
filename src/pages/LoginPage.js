@@ -41,7 +41,7 @@ const StyledContent = styled('div')(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-export default function LoginPage( {socket} ) {
+export default function LoginPage({ socket }) {
   const mdUp = useResponsive('up', 'md');
   return (
     <>
@@ -72,7 +72,7 @@ export default function LoginPage( {socket} ) {
             <Typography variant="h4" gutterBottom>
               Sign in to Starling
             </Typography>
-            <LoginForm socket={socket} />
+            {socket.id && <LoginForm socket={socket} />}
           </StyledContent>
         </Container>
       </StyledRoot>

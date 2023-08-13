@@ -60,6 +60,7 @@ export const initialState = {
   framesArrey: frameArrey,
   SendFrameFromAppSpeed: 2,
   currentFrameindex: 0,
+  UserList: [0]
 };
 
 export const Store = createContext(initialState);
@@ -285,6 +286,8 @@ const SaveNewFrame = (state) => {
 
 const ChangeSendFrameFromAppSpeed = (state, action) => ({ ...state, SendFrameFromAppSpeed: action });
 
+const NewUserAdded = (state, action) => ({ ...state, UserList: action })
+  
 /**
  * Reducers for state/actions
  */
@@ -324,6 +327,8 @@ const reducer = (state, action) => {
       return SaveNewFrame(state);
     case "CHANGE_SEND_FRAME_FROM_APP_SPEED":
       return ChangeSendFrameFromAppSpeed(state, action.index);
+    case "NEW-USER_ADDED":
+      return NewUserAdded(state, action.index);
     default:
       return state;
   }

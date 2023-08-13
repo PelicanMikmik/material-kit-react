@@ -139,6 +139,13 @@ export const SaveNewFrame = (dispatch) => {
 export const ChangeSendFrameFromAppSpeed = (value, dispatch) => {
     dispatch({
         type: "CHANGE_SEND_FRAME_FROM_APP_SPEED",
-        index: value
+        index: value,
+    });
+};
+
+export const NewUserAdded = (value, dispatch) => {
+    dispatch({
+        type: "NEW-USER_ADDED",
+        index: value,
     });
 };
