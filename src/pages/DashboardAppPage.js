@@ -1,13 +1,14 @@
 import { Helmet } from 'react-helmet-async';
 import PropTypes from 'prop-types';
-import { useContext } from 'react';
+import { useEffect , useState , useContext } from 'react';
 
 // @mui
-import { Grid, Container, Typography, Button, Stack, CardHeader, Card, CardContent } from '@mui/material';
+import { Grid, Container, Typography, Button, CardHeader, Card, CardContent } from '@mui/material';
 // components
 import Iconify from '../components/iconify';
 import FrameLoader from "../components/Frames/Frame editor/css-sprite-animatior-master/src/components/FrameLoader";
 import AnimationWindow from "../components/Frames/Frame editor/css-sprite-animatior-master/src/components/AnimationWindow";
+import AssignUsersToMatrix from "../components/Frames/AssignUsersToMatrix"
 
 // sections
 import {
@@ -22,9 +23,49 @@ import { Store } from "../components/Frames/Frame editor/css-sprite-animatior-ma
 // ----------------------------------------------------------------------
 
 export default function DashboardAppPage({ socket }) {
+  const [messages, setMessages] = useState([]);
+  const [playStatus, setPlayStatus] = useState('stop');
+  const [indexOfCurrentUser, setIndexOfCurrentUser] = useState(0);
   const { state, dispatch } = useContext(Store);
   const { UserList, currentFrameindex, currentFrame, frames } = state;
 
+  useEffect(() => {
+    socket.on("messageResponse", (data) => {
+      setMessages([...messages, data]);
+    });
+  }, [socket, messages]);
+
+  //  UPDATE INDEX OF CURRENT USER//////
+  useEffect(() => {
+    socket.on("newUserResponse", (users) => {
+      const currentUser = users.find((user) => socket.id === user.socketID);
+      setIndexOfCurrentUser(users.map((el) => el.socketID).indexOf(socket.id));
+    });
+  }, [playStatus === 'play']);
+
+  //  UPDATE INDEX OF CURRENT FRAME AND PLAY \ STOP //////
+  let interval;
+  useEffect(() => {
+    switch (playStatus) {
+      case 'play':
+        // interval = setInterval(() => {
+        //   setIndexOfCurrentFrame((index) => (index + 1) % messages.at(-1).text.frames.length);
+        // }, 1000 * playSpeed);
+        break;
+
+      case 'load':
+        // setIndexOfCurrentFrame(0);
+        // setColorBackGround('grey');
+        // clearInterval(interval);
+        break;
+
+      default:
+        // clearInterval(interval);
+        // setIndexOfCurrentFrame(0);
+    }
+
+    return () => clearInterval(interval);
+  }, [playStatus]);
 
   const handleSendMessage = (e) => {
     if (e === "play") {
@@ -35,6 +76,7 @@ export default function DashboardAppPage({ socket }) {
         id: `${socket.id}${Math.random()}`,
         socketID: socket.id,
       });
+
       // setMessage("");
     }
     if (e === "stop") {
@@ -58,7 +100,6 @@ export default function DashboardAppPage({ socket }) {
       // setMessage("");
     }
   };
-
 
   return (
     <>
@@ -123,6 +164,13 @@ export default function DashboardAppPage({ socket }) {
             <FrameLoader />
           </Grid>
 
+          <Grid item xs={12} sm={6} md={6}>
+            <AssignUsersToMatrix
+              messages={messages}
+              indexOfCurrentUser={indexOfCurrentUser}
+              socket={socket} />
+          </Grid>
+
           <Grid item xs={12} sm={4} md={6} >
             <AnimationWindow />
           </Grid>
@@ -142,6 +190,9 @@ export default function DashboardAppPage({ socket }) {
             <AppWidgetSummary title="Matrix size" total={frames[0].length} color="info" />
           </Grid>
 
+          <Grid item xs={6} sm={4} md={3}>
+            <AppWidgetSummary title="Casting Status" total={11} color="info" />
+          </Grid>
 
           <Grid item xs={12} md={6} lg={4}>
             <AppTrafficBySite
@@ -163,7 +214,10 @@ export default function DashboardAppPage({ socket }) {
 
 DashboardAppPage.propTypes = {
   socket: PropTypes.shape({
-    // emit: PropTypes.func.isRequired,
+    emit: PropTypes.func.isRequired,
     on: PropTypes.func.isRequired,
+    // id: PropTypes.func.isRequired,
+
   }).isRequired,
+  
 };

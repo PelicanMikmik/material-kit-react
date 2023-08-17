@@ -54,7 +54,7 @@ const CssFrame = (props) => {
 };
 
 CssFrame.propTypes = {
-  frame: PropTypes.array.isRequired,
+  // frame: PropTypes.array.isRequired,
   size: PropTypes.number.isRequired,
 };
 

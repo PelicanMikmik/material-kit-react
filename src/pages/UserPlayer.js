@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
+import PropTypes from 'prop-types';
 
 import { Helmet } from 'react-helmet-async';
 import { Link as RouterLink } from 'react-router-dom';
 // @mui
 import { styled } from '@mui/material/styles';
 import { Button, Typography, Container, Box } from '@mui/material';
-import AssignUsersToMatrix from "../components/Frames/AssignUsersToMatrix"
 
 // ----------------------------------------------------------------------
 
@@ -28,8 +28,6 @@ export default function UserPlayer({ socket }) {
   const [indexOfCurrentUser, setIndexOfCurrentUser] = useState("");
   const [indexOfCurrentFrame, setIndexOfCurrentFrame] = useState(0);
   const [colorBackGround, setColorBackGround] = useState('');
-  const [width, setWidth] = useState("");
-  const [height, setHeight] = useState("");
   const [playStatus, setPlayStatus] = useState('');
   const [playSpeed, setPlaySpeed] = useState(1);
   const messagesLength = messages.length;
@@ -48,8 +46,6 @@ export default function UserPlayer({ socket }) {
       return;
     }
 
-    setWidth(messages[messages.length - 1].text.width);
-    setHeight(messages[messages.length - 1].text.height);
     setPlayStatus(messages[messages.length - 1].castStatus);
     setPlaySpeed(messages[messages.length - 1].text.SendFrameFromAppSpeed);
   }, [messagesLength]);
@@ -60,11 +56,11 @@ export default function UserPlayer({ socket }) {
       const currentUser = users.find((user) => socket.id === user.socketID);
       setIndexOfCurrentUser(users.map((el) => el.socketID).indexOf(socket.id));
     });
-  }, [playStatus === 'play']);
+  }, [socket, playStatus === 'play']);
 
   //  UPDATE INDEX OF CURRENT FRAME AND PLAY \ STOP //////
-  let interval;
   useEffect(() => {
+    let interval;
     switch (playStatus) {
       case 'play':
         interval = setInterval(() => {
@@ -119,10 +115,6 @@ export default function UserPlayer({ socket }) {
           <Typography sx={{ color: 'text.secondary' }}>
             Hello
           </Typography>
-          <AssignUsersToMatrix
-            messages={messages}
-            indexOfCurrentUser={indexOfCurrentUser}
-            socket={socket} />
           <Box
             component="img"
             src="/assets/illustrations/illustration_404.svg"
@@ -137,3 +129,11 @@ export default function UserPlayer({ socket }) {
     </>
   );
 }
+
+UserPlayer.propTypes = {
+  socket: PropTypes.shape({
+    emit: PropTypes.func.isRequired,
+    on: PropTypes.func.isRequired,
+    // id: PropTypes.func.isRequired,
+  }).isRequired,
+};
