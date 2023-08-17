@@ -39,39 +39,6 @@ const Controlls = ({ socket }) => {
   const [tempHeight, settempHeight] = useState("");
 
 
-  const handleSendMessage = (e) => {
-    if (e === "play") {
-      socket.emit("message", {
-        castStatus: "play",
-        text: state,
-        name: localStorage.getItem("userName"),
-        id: `${socket.id}${Math.random()}`,
-        socketID: socket.id,
-      });
-      setMessage("");
-    }
-    if (e === "stop") {
-      socket.emit("message", {
-        castStatus: "stop",
-        text: state,
-        name: localStorage.getItem("userName"),
-        id: `${socket.id}${Math.random()}`,
-        socketID: socket.id,
-      });
-      setMessage("");
-    }
-    if (e === "load") {
-      socket.emit("message", {
-        castStatus: "load",
-        text: state,
-        name: localStorage.getItem("userName"),
-        id: `${socket.id}${Math.random()}`,
-        socketID: socket.id,
-      });
-      setMessage("");
-    }
-  };
-
   useEffect(() => {
     const checkKey = (event) => {
       const code = event.keyCode;
@@ -264,53 +231,6 @@ const Controlls = ({ socket }) => {
 Controlls.propTypes = {
   socket: PropTypes.object.isRequired,
 };
-
-
-
-/* <Stack
-spacing={2}
-direction={{ xs: 'column', sm: 'row' }}
-spacing={{ xs: 1, sm: 2, md: 4 }}>
-
-<Button
-variant="contained"
-type="button"
-className=""
-href="#"
-onClick={(e) => {
-  e.preventDefault();
-  handleSendMessage("load");
-}}
->
----LOAD---
-</Button>
-<Button
-type="button"
-variant="contained"
-className=""
-href="#"
-onClick={(e) => {
-  e.preventDefault();
-  handleSendMessage("play");
-}}
->
----PLAY---
-</Button>
-<Button
-type="button"
-variant="contained"
-className=""
-href="#"
-onClick={(e) => {
-  e.preventDefault();
-  handleSendMessage("stop");
-}}
->
----STOP---
-</Button>
-</Stack> */
-
-
 
 export default Controlls;
 

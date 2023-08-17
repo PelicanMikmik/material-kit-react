@@ -13,6 +13,7 @@ import LoginPage from './pages/LoginPage';
 import Page404 from './pages/Page404';
 import EditorPage from './pages/EditorPage';
 import DashboardAppPage from './pages/DashboardAppPage';
+import UserPlayer from './pages/UserPlayer';
 
 
 import { NewUserAdded } from "./components/Frames/Frame editor/css-sprite-animatior-master/src/Actions";
@@ -37,10 +38,6 @@ export default function Router() {
     })
   },)
 
-
-
-
-
   const routes = useRoutes([
     {
       path: '/',
@@ -60,6 +57,7 @@ export default function Router() {
       element: <SimpleLayout />,
       children: [
         { element: <Navigate to="/dashboard/app" /> },
+        { path: 'userPlayer', element: <UserPlayer socket={socket}/> },
         { path: '404', element: <Page404 /> },
         { path: '*', element: <Navigate to="/404" /> },
       ],
