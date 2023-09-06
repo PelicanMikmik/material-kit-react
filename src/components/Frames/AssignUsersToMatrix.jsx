@@ -32,7 +32,7 @@ const AssignUsersToMatrix = ({ messages, indexOfCurrentUser, socket }) => {
 
         const matrix = Array.from({ length: height }, () =>
             Array.from({ length: width }, () => {
-                const value = index < arr.length ? arr[index] : 0;
+                const value = index < arr.length ? arr[index] : "empty";
                 index += 1;
                 return value;
             })

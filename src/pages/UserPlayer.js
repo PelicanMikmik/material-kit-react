@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import PropTypes from 'prop-types';
 
 import { Helmet } from 'react-helmet-async';
@@ -6,6 +6,10 @@ import { Link as RouterLink } from 'react-router-dom';
 // @mui
 import { styled } from '@mui/material/styles';
 import { Button, Typography, Container, Box } from '@mui/material';
+
+import AssignUsersToMatrix from '../components/Frames/AssignUsersToMatrix'
+import { Store } from "../components/Frames/Frame editor/css-sprite-animatior-master/src/Store";
+
 
 // ----------------------------------------------------------------------
 
@@ -25,14 +29,27 @@ const StyledContent = styled('div')(({ theme }) => ({
 export default function UserPlayer({ socket }) {
 
   const [messages, setMessages] = useState([]);
-  const [indexOfCurrentUser, setIndexOfCurrentUser] = useState("");
+  const [indexOfCurrentUser, setIndexOfCurrentUser] = useState(-1);
   const [indexOfCurrentFrame, setIndexOfCurrentFrame] = useState(0);
   const [colorBackGround, setColorBackGround] = useState('');
   const [playStatus, setPlayStatus] = useState('');
   const [playSpeed, setPlaySpeed] = useState(1);
+  const [userName, setuserName] = useState('');
+
   const messagesLength = messages.length;
+  const { state, dispatch } = useContext(Store);
+  const { UserList } = state;
+
 
   // ----------------------------------------------------------------------
+  useEffect(() => {
+    const findUserNameBySocketID = (array, socketIDToFind) => {
+      const foundUser = array.find(user => user.socketID === socketIDToFind);
+      return foundUser ? foundUser.userName : null;
+    };
+    setuserName(findUserNameBySocketID(UserList, socket.id))
+  }, [UserList]);
+
 
   useEffect(() => {
     socket.on("messageResponse", (data) => {
@@ -40,12 +57,11 @@ export default function UserPlayer({ socket }) {
     });
   }, [socket, messages]);
 
-  //  UPDATE VARIABLES FROM STORE - width , height , play status , PLAY SPEED//////
+  //  UPDATE VARIABLES FROM STORE - , play status , PLAY SPEED//////
   useEffect(() => {
     if (messagesLength === 0) {
       return;
     }
-
     setPlayStatus(messages[messages.length - 1].castStatus);
     setPlaySpeed(messages[messages.length - 1].text.SendFrameFromAppSpeed);
   }, [messagesLength]);
@@ -84,6 +100,7 @@ export default function UserPlayer({ socket }) {
 
   //  UPDATE BACKGROUND COLOR//////
   useEffect(() => {
+
     if (messagesLength === 0) {
       return;
     }
@@ -109,17 +126,25 @@ export default function UserPlayer({ socket }) {
       }}>
         <StyledContent sx={{ textAlign: 'center', alignItems: 'center', }}>
           <Typography variant="h3" paragraph>
-            Hello
+            Hello {userName}
           </Typography>
 
           <Typography sx={{ color: 'text.secondary' }}>
-            Hello
+            {indexOfCurrentUser}
+          </Typography>
+          <Typography sx={{ color: 'text.secondary' }}>
+            {colorBackGround}
           </Typography>
           <Box
             component="img"
             src="/assets/illustrations/illustration_404.svg"
             sx={{ height: 260, mx: 'auto', my: { xs: 5, sm: 10 } }}
           />
+
+          <AssignUsersToMatrix
+            messages={messages}
+            indexOfCurrentUser={indexOfCurrentUser}
+            socket={socket} />
 
           <Button to="/" size="large" variant="contained" component={RouterLink}>
             Log out
