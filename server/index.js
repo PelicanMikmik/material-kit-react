@@ -46,8 +46,13 @@ socketIO.on("connection", (socket) => {
 
     socket.on("disconnect", () => {
         console.log("🔥: A user disconnected");
-        users = users.filter((user) => user.socketID !== socket.id);
-        socketIO.emit("newUserResponse", users);
+        const disconnectedUser = users.find((user) => user.socketID === socket.id);
+        if (disconnectedUser) {
+            console.log(users);
+            const index = users.indexOf(disconnectedUser);
+            users[index] = { userName: null, socketID: null }; // Replace the disconnected user with null
+            socketIO.emit("newUserResponse", users);
+        }
         socket.disconnect();
     });
 });

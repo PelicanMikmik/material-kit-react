@@ -28,6 +28,7 @@ const StyledContent = styled('div')(({ theme }) => ({
 
 export default function UserPlayer({ socket }) {
 
+  const [showAssignUsersToMatrix, setShowAssignUsersToMatrix] = useState(true);
   const [messages, setMessages] = useState([]);
   const [indexOfCurrentUser, setIndexOfCurrentUser] = useState(-1);
   const [indexOfCurrentFrame, setIndexOfCurrentFrame] = useState(0);
@@ -110,6 +111,15 @@ export default function UserPlayer({ socket }) {
       setColorBackGround(messages.at(-1).text.frames[indexOfCurrentFrame][indexOfCurrentUser].color);
   }, [indexOfCurrentFrame]);
 
+  const toggleAssignUsersToMatrix = () => {
+    setShowAssignUsersToMatrix(!showAssignUsersToMatrix);
+  };
+
+  const UserLogedOut = () => {
+    socket.emit("disconnect",socket.id)
+    console.log("user logged out");
+  }
+
   return (
     <>
       <Helmet>
@@ -129,24 +139,31 @@ export default function UserPlayer({ socket }) {
             Hello {userName}
           </Typography>
 
-          <Typography sx={{ color: 'text.secondary' }}>
-            {indexOfCurrentUser}
+          <Typography sx={{ textAlign: 'center', alignItems: 'center', }}>
+            {indexOfCurrentUser === -1 ? "wait for admin to start casting" : "check your position"}
           </Typography>
-          <Typography sx={{ color: 'text.secondary' }}>
-            {colorBackGround}
-          </Typography>
-          <Box
+
+          {/* <Box
             component="img"
             src="/assets/illustrations/illustration_404.svg"
             sx={{ height: 260, mx: 'auto', my: { xs: 5, sm: 10 } }}
-          />
+          /> */}
 
-          <AssignUsersToMatrix
-            messages={messages}
-            indexOfCurrentUser={indexOfCurrentUser}
-            socket={socket} />
+          {/* Button to toggle AssignUsersToMatrix visibility */}
+          <Button onClick={toggleAssignUsersToMatrix} variant="contained" size="small" >
+            {showAssignUsersToMatrix ? 'Hide Assign Users' : 'Show matrix postion Users'}
+          </Button>
 
-          <Button to="/" size="large" variant="contained" component={RouterLink}>
+          {/* Render AssignUsersToMatrix if showAssignUsersToMatrix is true */}
+          {showAssignUsersToMatrix ? (
+            <AssignUsersToMatrix
+              messages={messages}
+              indexOfCurrentUser={indexOfCurrentUser}
+              socket={socket}
+            />
+          ) : null}
+
+          <Button to="/" size="small" variant="contained" component={RouterLink} onClick={UserLogedOut}>
             Log out
           </Button>
         </StyledContent>
