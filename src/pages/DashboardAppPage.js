@@ -1,11 +1,10 @@
 import { Helmet } from 'react-helmet-async';
 import PropTypes from 'prop-types';
-import { useEffect , useState , useContext } from 'react';
+import { useEffect, useState, useContext } from 'react';
 
 // @mui
 import { Grid, Container, Typography, Button, CardHeader, Card, CardContent } from '@mui/material';
 // components
-import Iconify from '../components/iconify';
 import FrameLoader from "../components/Frames/Frame editor/css-sprite-animatior-master/src/components/FrameLoader";
 import AnimationWindow from "../components/Frames/Frame editor/css-sprite-animatior-master/src/components/AnimationWindow";
 import AssignUsersToMatrix from "../components/Frames/AssignUsersToMatrix"
@@ -14,7 +13,6 @@ import AssignUsersToMatrix from "../components/Frames/AssignUsersToMatrix"
 import {
 
   AppTrafficBySite,
-  AppWidgetSummary,
 
 } from '../sections/@dashboard/app';
 
@@ -43,30 +41,6 @@ export default function DashboardAppPage({ socket }) {
     });
   }, [playStatus === 'play']);
 
-  //  UPDATE INDEX OF CURRENT FRAME AND PLAY \ STOP //////
-  let interval;
-  useEffect(() => {
-    switch (playStatus) {
-      case 'play':
-        // interval = setInterval(() => {
-        //   setIndexOfCurrentFrame((index) => (index + 1) % messages.at(-1).text.frames.length);
-        // }, 1000 * playSpeed);
-        break;
-
-      case 'load':
-        // setIndexOfCurrentFrame(0);
-        // setColorBackGround('grey');
-        // clearInterval(interval);
-        break;
-
-      default:
-        // clearInterval(interval);
-        // setIndexOfCurrentFrame(0);
-    }
-
-    return () => clearInterval(interval);
-  }, [playStatus]);
-
   const handleSendMessage = (e) => {
     if (e === "play") {
       socket.emit("message", {
@@ -76,8 +50,7 @@ export default function DashboardAppPage({ socket }) {
         id: `${socket.id}${Math.random()}`,
         socketID: socket.id,
       });
-
-      // setMessage("");
+      setPlayStatus("PLAYING")
     }
     if (e === "stop") {
       socket.emit("message", {
@@ -87,7 +60,7 @@ export default function DashboardAppPage({ socket }) {
         id: `${socket.id}${Math.random()}`,
         socketID: socket.id,
       });
-      // setMessage("");
+      setPlayStatus("STOP")
     }
     if (e === "load") {
       socket.emit("message", {
@@ -97,7 +70,7 @@ export default function DashboardAppPage({ socket }) {
         id: `${socket.id}${Math.random()}`,
         socketID: socket.id,
       });
-      // setMessage("");
+      setPlayStatus("LOADED")
     }
   };
 
@@ -164,48 +137,50 @@ export default function DashboardAppPage({ socket }) {
             <FrameLoader />
           </Grid>
 
-          <Grid item xs={12} sm={6} md={6}>
+          <Grid item xs={12} sm={12} md={6}>
             <AssignUsersToMatrix
               messages={messages}
               indexOfCurrentUser={indexOfCurrentUser}
               socket={socket} />
           </Grid>
 
-          <Grid item xs={12} sm={4} md={6} >
-            <AnimationWindow />
-          </Grid>
-          <Grid item xs={6} sm={4} md={3}>
-            <AppWidgetSummary title="Current Matrix" total={currentFrameindex} color="info" />
-          </Grid>
 
-          <Grid item xs={6} sm={4} md={3}>
-            <AppWidgetSummary title="Current Casted frame No." total={currentFrame} color="info" />
-          </Grid>
 
-          <Grid item xs={6} sm={4} md={3}>
-            <AppWidgetSummary title="Active Useres" total={UserList.length} color="info" />
-          </Grid>
-
-          <Grid item xs={6} sm={4} md={3}>
-            <AppWidgetSummary title="Matrix size" total={frames[0].length} color="info" />
-          </Grid>
-
-          <Grid item xs={6} sm={4} md={3}>
-            <AppWidgetSummary title="Casting Status" total={11} color="info" />
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={4}>
+          <Grid item xs={12} md={6} lg={6}>
             <AppTrafficBySite
-              title="Traffic by Site"
+              title="INFO"
               list={[
                 {
-                  name: 'FaceBook',
-                  value: 323234,
-                  icon: <Iconify icon={'eva:facebook-fill'} color="#1877F2" width={32} />,
+                  name: 'Matrix size',
+                  value: frames[0].length,
+                },
+                {
+                  name: `Play status: ${playStatus}`,
+                  value: 0,
+                },
+                {
+                  name: 'Active Useres',
+                  value: UserList.length,
+                },
+                {
+                  name: 'Current Casted frame No.',
+                  value: currentFrame,
+                },
+                {
+                  name: 'Current Matrix',
+                  value: currentFrameindex,
                 },
               ]}
             />
           </Grid>
+
+          <Grid item xs={12} sm={6} md={6} >
+            <AnimationWindow />
+          </Grid>
+
+          {/* <Grid item xs={6} sm={4} md={3}>
+                <AppWidgetSummary title="Current Matrix" total={currentFrameindex} color="info" />
+              </Grid> */}
         </Grid>
       </Container>
     </>
@@ -219,5 +194,5 @@ DashboardAppPage.propTypes = {
     // id: PropTypes.func.isRequired,
 
   }).isRequired,
-  
+
 };

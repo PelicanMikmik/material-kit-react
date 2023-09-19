@@ -15,8 +15,6 @@ export default function App() {
     <HelmetProvider>
       <BrowserRouter>
         <ThemeProvider>
-          <ScrollToTop />
-          <StyledChart />
           <Router />
         </ThemeProvider>
       </BrowserRouter>

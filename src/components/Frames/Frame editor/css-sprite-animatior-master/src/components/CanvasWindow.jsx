@@ -75,7 +75,7 @@ const CanvasWindow = ({ size }) => {
 
     return (
 
-        <Grid spacing={3}>
+        <Grid>
             <Card >
                 <CardHeader title='current frame ' subheader='click on cell to change color' />
                 <CardContent>
