@@ -8,6 +8,7 @@ import { Grid, Container, Typography, Button, CardHeader, Card, CardContent } fr
 import FrameLoader from "../components/Frames/Frame editor/css-sprite-animatior-master/src/components/FrameLoader";
 import AnimationWindow from "../components/Frames/Frame editor/css-sprite-animatior-master/src/components/AnimationWindow";
 import AssignUsersToMatrix from "../components/Frames/AssignUsersToMatrix"
+import UserPlayer from "./UserPlayer"
 
 // sections
 import {
@@ -176,6 +177,10 @@ export default function DashboardAppPage({ socket }) {
 
           <Grid item xs={12} sm={6} md={6} >
             <AnimationWindow />
+          </Grid>
+
+          <Grid item xs={12} sm={12} md={12}>
+            <UserPlayer socket={socket}/>
           </Grid>
 
           {/* <Grid item xs={6} sm={4} md={3}>
