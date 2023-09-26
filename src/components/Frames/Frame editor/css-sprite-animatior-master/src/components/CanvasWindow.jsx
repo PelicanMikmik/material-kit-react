@@ -1,4 +1,5 @@
 import React, { useContext } from "react";
+import PropTypes from 'prop-types';
 
 // @mui
 import {
@@ -26,23 +27,37 @@ const PixelButton = ({ color, onClick, coordinates }) => (
     </Button>
 );
 
+PixelButton.propTypes = {
+    color: PropTypes.string.isRequired,
+    onClick: PropTypes.func.isRequired,
+    coordinates: PropTypes.shape({
+        x: PropTypes.number.isRequired,
+        y: PropTypes.number.isRequired,
+    }).isRequired,
+};
+
 const Row = ({ size, pixelRow }) => (
     <div className={size > 0 ? "pixelrow" : "row"} style={{ height: size }}>
         {pixelRow}
     </div>
 );
 
+Row.propTypes = {
+    size: PropTypes.number.isRequired,
+    pixelRow: PropTypes.arrayOf(PropTypes.element).isRequired,
+};
+
 const CanvasWindow = ({ size }) => {
     const { state, dispatch } = useContext(Store);
-    const { canvasArray, width, height } = state;
+    const { canvasArray, width } = state;
 
     const generateFrame = () => {
         if (canvasArray === undefined) return null;
 
         let pixelRow = [];
         const frame = canvasArray.map((cell, index) => {
-            const x = index % width;
-            const y = Math.floor(index / width);
+            const x = (index % width) + 1;
+            const y = 1 + (Math.floor(index / width));
 
             const pixelId = `pixel-${x}-${y}`;
 
@@ -52,7 +67,7 @@ const CanvasWindow = ({ size }) => {
 
             const pixelButton = (
                 <PixelButton
-                    key={pixelId}
+                    key={`${pixelId}-${index}`}
                     color={cell.color}
                     onClick={handleClick}
                     coordinates={{ x, y }}
@@ -60,7 +75,7 @@ const CanvasWindow = ({ size }) => {
             );
 
             pixelRow.push(pixelButton);
-            if (x === width - 1) {
+            if (x === width) {
                 const row = (
                     <Row size={size} pixelRow={pixelRow} key={`row${y}-${index}`} />
                 );
@@ -84,6 +99,10 @@ const CanvasWindow = ({ size }) => {
             </Card>
         </Grid>
     )
+};
+
+CanvasWindow.propTypes = {
+    size: PropTypes.number.isRequired,
 };
 
 export default CanvasWindow;

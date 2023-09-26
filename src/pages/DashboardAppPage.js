@@ -25,7 +25,9 @@ export default function DashboardAppPage({ socket }) {
   const [messages, setMessages] = useState([]);
   const [playStatus, setPlayStatus] = useState('stop');
   const [indexOfCurrentUser, setIndexOfCurrentUser] = useState(0);
-  const { state, dispatch } = useContext(Store);
+  // const { state, dispatch } = useContext(Store);
+  const { state } = useContext(Store);
+
   const { UserList, currentFrameindex, currentFrame, frames } = state;
 
   useEffect(() => {
@@ -35,12 +37,14 @@ export default function DashboardAppPage({ socket }) {
   }, [socket, messages]);
 
   //  UPDATE INDEX OF CURRENT USER//////
+  const playStatusDependencies = 'play';
+
   useEffect(() => {
     socket.on("newUserResponse", (users) => {
-      const currentUser = users.find((user) => socket.id === user.socketID);
-      setIndexOfCurrentUser(users.map((el) => el.socketID).indexOf(socket.id));
+      const indexOfCurrentUser = users.findIndex((user) => socket.id === user.socketID);
+      setIndexOfCurrentUser(indexOfCurrentUser);
     });
-  }, [playStatus === 'play']);
+  }, [socket, playStatusDependencies]);
 
   const handleSendMessage = (e) => {
     if (e === "play") {
@@ -180,7 +184,7 @@ export default function DashboardAppPage({ socket }) {
           </Grid>
 
           <Grid item xs={12} sm={12} md={12}>
-            <UserPlayer socket={socket}/>
+            {socket.id && <UserPlayer socket={socket} />}
           </Grid>
 
           {/* <Grid item xs={6} sm={4} md={3}>
@@ -197,7 +201,6 @@ DashboardAppPage.propTypes = {
     emit: PropTypes.func.isRequired,
     on: PropTypes.func.isRequired,
     // id: PropTypes.func.isRequired,
-
   }).isRequired,
 
 };

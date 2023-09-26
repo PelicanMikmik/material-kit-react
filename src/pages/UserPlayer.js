@@ -5,7 +5,7 @@ import { Helmet } from 'react-helmet-async';
 import { Link as RouterLink } from 'react-router-dom';
 // @mui
 import { styled } from '@mui/material/styles';
-import { Button, Typography, Container, Box } from '@mui/material';
+import { Button, Typography, Container } from '@mui/material';
 
 import AssignUsersToMatrix from '../components/Frames/AssignUsersToMatrix'
 import { Store } from "../components/Frames/Frame editor/css-sprite-animatior-master/src/Store";
@@ -38,7 +38,8 @@ export default function UserPlayer({ socket }) {
   const [userName, setuserName] = useState('');
 
   const messagesLength = messages.length;
-  const { state, dispatch } = useContext(Store);
+  // const { state, dispatch } = useContext(Store);
+  const { state } = useContext(Store);
   const { UserList } = state;
 
 
@@ -49,7 +50,7 @@ export default function UserPlayer({ socket }) {
       return foundUser ? foundUser.userName : null;
     };
     setuserName(findUserNameBySocketID(UserList, socket.id))
-  }, [UserList]);
+  }, [UserList, socket.id]);
 
 
   useEffect(() => {
@@ -65,16 +66,17 @@ export default function UserPlayer({ socket }) {
     }
     setPlayStatus(messages[messages.length - 1].castStatus);
     setPlaySpeed(messages[messages.length - 1].text.SendFrameFromAppSpeed);
-  }, [messagesLength]);
+  }, [messagesLength, messages]);
 
   //  UPDATE INDEX OF CURRENT USER//////
+  const playStatusDependencies = 'play';
+
   useEffect(() => {
     socket.on("newUserResponse", (users) => {
-      const currentUser = users.find((user) => socket.id === user.socketID);
-      setIndexOfCurrentUser(users.map((el) => el.socketID).indexOf(socket.id));
+      const indexOfCurrentUser = users.findIndex((user) => socket.id === user.socketID);
+      setIndexOfCurrentUser(indexOfCurrentUser);
     });
-  }, [socket, playStatus === 'play']);
-
+  }, [socket, playStatusDependencies]);
   //  UPDATE INDEX OF CURRENT FRAME AND PLAY \ STOP //////
   useEffect(() => {
     let interval;
@@ -97,26 +99,36 @@ export default function UserPlayer({ socket }) {
     }
 
     return () => clearInterval(interval);
-  }, [playStatus]);
+  }, [playStatus, playSpeed, messages]);
 
   //  UPDATE BACKGROUND COLOR//////
   useEffect(() => {
-
     if (messagesLength === 0) {
       return;
     }
-    if (indexOfCurrentUser > messages.at(-1).text.frames[indexOfCurrentFrame].length - 1) {
-      setColorBackGround("wait for bigger frame size")
-    } else
-      setColorBackGround(messages.at(-1).text.frames[indexOfCurrentFrame][indexOfCurrentUser].color);
-  }, [indexOfCurrentFrame]);
+    const currentFrame = messages.at(-1).text.frames[indexOfCurrentFrame];
+    if (currentFrame && currentFrame.length > indexOfCurrentUser) {
+      setColorBackGround(currentFrame[indexOfCurrentUser+1].color);
+    } else {
+      setColorBackGround("wait for bigger frame size");
+    }
+  }, [indexOfCurrentFrame, messages, indexOfCurrentUser, messagesLength]);
+
+
+
+
+
+
+
+
+  
 
   const toggleAssignUsersToMatrix = () => {
     setShowAssignUsersToMatrix(!showAssignUsersToMatrix);
   };
 
   const UserLogedOut = () => {
-    socket.emit("disconnect",socket.id)
+    socket.emit("disconnect", socket.id)
     console.log("user logged out");
   }
 
