@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
+
 
 // @mui
 import {
@@ -12,21 +13,23 @@ import {
     Table,
 } from '@mui/material';
 
+import { Store } from "./Frame editor/css-sprite-animatior-master/src/Store";
+
 const AssignUsersToMatrix = ({ messages, indexOfCurrentUser, socket }) => {
-    const [usersList, setUsersList] = useState([]);
+    const { state } = useContext(Store);
+    const { UserList } = state;
+
+    const [usersListLocal, setUsersListLocal] = useState([]);
     const numRows = messages.length === 0 ? 0 : messages.at(-1).text.height;
     const numCols = messages.length === 0 ? 0 : messages.at(-1).text.width;
 
-    // Socket listens for new user response, Lists all Active users
+ 
     useEffect(() => {
-        socket.on("newUserResponse", (data) => {
-            setUsersList(null);
-            const currentActiveUsers = data.map((user) => user.userName);
-            setUsersList(currentActiveUsers);
-        });
-    }, [socket, messages]);
+            const currentActiveUsers = UserList.map((user) => user.userName);
+            setUsersListLocal(currentActiveUsers);
+    }, [UserList]);
 
-    function arrayToMatrix(arr, width, height, indexOfCurrentUser) {
+    function arrayToMatrix(arr, width, height) {
         let index = 0;
 
         const matrix = Array.from({ length: height }, () =>
@@ -38,9 +41,7 @@ const AssignUsersToMatrix = ({ messages, indexOfCurrentUser, socket }) => {
         );
         return matrix;
     }
-    const matrix = arrayToMatrix(usersList, numCols, numRows, indexOfCurrentUser);
-
-    const matrixlenght = matrix.flat.length;
+    const matrix = arrayToMatrix(usersListLocal, numCols, numRows);
 
     return (
         <>
